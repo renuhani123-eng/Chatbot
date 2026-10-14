@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Buddy | College Tech Mentor Chatbot</title>
+  
+  <!-- ====================================================================
+       CAMPUS BUDDY - YOUR COLLEGE TECH MENTOR
+       A 100% Offline, Beginner-Friendly Chatbot for First-Year Students.
+       Built with pure HTML5, CSS3, and Vanilla JavaScript (No Frameworks).
+       ==================================================================== -->
+  
+  <style>
+    /* ------------------------------------------------------------------
+       1. CSS VARIABLES (DESIGN SYSTEM)
+       We define our color palette, typography, and spacing variables here.
+       This makes the entire app easy to customize and maintain.
+       ------------------------------------------------------------------ */
+    :root {
+      /* Background colors (Deep modern navy, charcoal, and slate) */
+      --bg-dark: #080c15;
+      --bg-surface: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #26354a;
+      --bg-input: #0b1120;
+      
+      /* Vibrant Accent Colors (Cyber cyan, Indigo, Purple, Emerald) */
+      --accent-cyan: #38bdf8;
+      --accent-indigo: #6366f1;
+      --accent-purple: #a855f7;
+      --accent-green: #34d399;
+      --accent-amber: #fbbf24;
+      
+      /* Modern Gradients */
+      --gradient-primary: linear-gradient(135deg, #38bdf8 0%, #6366f1 50%, #a855f7 100%);
+      --gradient-card: linear-gradient(180deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.85) 100%);
+      --gradient-bubble-bot: linear-gradient(145deg, #1e293b 0%, #131b2e 100%);
+      --gradient-bubble-user: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+      
+      /* Typography Colors */
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --text-highlight: #38bdf8;
+      
+      /* Borders & Shadows */
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(56, 189, 248, 0.5);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+      --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+      --shadow-glow: 0 0 22px rgba(56, 189, 248, 0.25);
+      
+      /* Sizing & Transitions */
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      --transition-fast: 0.18s ease;
+      --transition-normal: 0.28s ease;
+    }
+
+    /* ------------------------------------------------------------------
+       2. RESET & BASE STYLES
+       Normalize default browser padding, margins, and box sizing.
+       ------------------------------------------------------------------ */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background-image: 
+        radial-gradient(circle at 12% 18%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 88% 82%, rgba(168, 85, 247, 0.07) 0%, transparent 40%);
+    }
+
+    /* Custom Modern Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.15);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-cyan);
+    }
+
+    /* ------------------------------------------------------------------
+       3. TOP NAVIGATION HEADER
+       ------------------------------------------------------------------ */
+    .app-header {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: var(--shadow-glow);
+      position: relative;
+      user-select: none;
+    }
+
+    .brand-title-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .brand-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      -webkit-text-fill-color: initial;
+    }
+
+    .brand-status {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.9); }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .icon-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .icon-btn.active {
+      color: var(--accent-cyan);
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .btn-label-desktop {
+      display: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-left: 0.35rem;
+    }
+
+    @media (min-width: 768px) {
+      .btn-with-label {
+        width: auto;
+        padding: 0 0.85rem;
+      }
+      .btn-label-desktop {
+        display: inline;
+      }
+    }
+
+    /* ------------------------------------------------------------------
+       4. MAIN LAYOUT (CHAT FEED & INPUT AREA)
+       ------------------------------------------------------------------ */
+    .app-body {
+      flex: 1;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ------------------------------------------------------------------
+       5. CHAT MESSAGES FEED
+       ------------------------------------------------------------------ */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 1.25rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      scroll-behavior: smooth;
+    }
+
+    /* Welcome Hero Banner */
+    .welcome-hero {
+      background: var(--gradient-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: opacity var(--transition-normal);
+    }
+
+    .welcome-hero::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 320px;
+      height: 130px;
+      background: radial-gradient(ellipse, rgba(56, 189, 248, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .welcome-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      margin-bottom: 0.85rem;
+      font-weight: 500;
+    }
+
+    .welcome-title {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    .welcome-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      max-width: 620px;
+      margin: 0 auto 1.35rem;
+    }
+
+    /* Quick Starter Topic Cards */
+    .quick-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      text-align: left;
+    }
+
+    .quick-card {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.95rem 1rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .quick-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.15);
+    }
+
+    .quick-card-icon {
+      font-size: 1.35rem;
+      padding: 0.4rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+    }
+
+    .quick-card-content h4 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.2rem;
+    }
+
+    .quick-card-content p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    /* Message Rows */
+    .message-row {
+      display: flex;
+      gap: 0.85rem;
+      max-width: 860px;
+      width: 100%;
+      animation: messageFadeIn 0.25s ease-out forwards;
+    }
+
+    @keyframes messageFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message-row.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-row.bot {
+      align-self: flex-start;
+    }
+
+    .message-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      user-select: none;
+    }
+
+    .message-row.bot .message-avatar {
+      background: var(--gradient-primary);
+    }
+
+    .message-row.user .message-avatar {
+      background: #3b82f6;
+    }
+
+    .message-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      max-width: 85%;
+    }
+
+    .message-sender-info {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0 0.25rem;
+    }
+
+    .message-row.user .message-sender-info {
+      justify-content: flex-end;
+    }
+
+    .message-bubble {
+      padding: 1rem 1.15rem;
+      border-radius: var(--radius-lg);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      word-wrap: break-word;
+      position: relative;
+    }
+
+    .message-row.bot .message-bubble {
+      background: var(--gradient-bubble-bot);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      border-top-left-radius: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .message-row.user .message-bubble {
+      background: var(--gradient-bubble-user);
+      color: #ffffff;
+      border-top-right-radius: 4px;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Rich Message Typography Inside Bubbles */
+    .message-bubble p {
+      margin-bottom: 0.65rem;
+    }
+    .message-bubble p:last-child {
+      margin-bottom: 0;
+    }
+
+    .message-bubble strong {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .message-bubble ul, .message-bubble ol {
+      margin: 0.5rem 0 0.75rem 1.35rem;
+    }
+
+    .message-bubble li {
+      margin-bottom: 0.35rem;
+    }
+
+    .message-bubble code {
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--accent-cyan);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.84rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Code Block with Copy Button */
+    .code-block-container {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      margin: 0.65rem 0;
+      overflow: hidden;
+    }
+
+    .code-block-header {
+      background: #0d1322;
+      padding: 0.35rem 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .copy-code-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all var(--transition-fast);
+    }
+
+    .copy-code-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+      border-color: var(--accent-cyan);
+    }
+
+    .code-block-container pre {
+      padding: 0.75rem;
+      margin: 0;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      line-height: 1.45;
+      color: #e2e8f0;
+    }
+
+    .code-block-container pre code {
+      background: transparent;
+      padding: 0;
+      border: none;
+      color: inherit;
+    }
+
+    /* Follow-up Suggestions list below Bot Bubble */
+    .bot-followups {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+
+    .followup-chip {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: #bae6fd;
+      font-size: 0.75rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .followup-chip:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    /* Typing Indicator Animation */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0.85rem 1.15rem;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border-top-left-radius: 4px;
+      width: fit-content;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      opacity: 0.4;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% {
+        transform: translateY(0);
+        opacity: 0.4;
+      }
+      40% {
+        transform: translateY(-6px);
+        opacity: 1;
+      }
+    }
+
+    /* ------------------------------------------------------------------
+       6. SUGGESTION CHIPS CAROUSEL (ABOVE INPUT)
+       ------------------------------------------------------------------ */
+    .suggestions-carousel-wrap {
+      padding: 0.4rem 1.25rem 0.25rem;
+      background: transparent;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .suggestions-carousel {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .suggestions-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .suggestion-pill {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+
+    .suggestion-pill:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-main);
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* ------------------------------------------------------------------
+       7. CHAT INPUT SECTION
+       ------------------------------------------------------------------ */
+    .chat-input-area {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-subtle);
+      padding: 0.75rem 1.25rem 0.9rem;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .input-form {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.65rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.4rem 0.6rem 0.4rem 0.9rem;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .input-form:focus-within {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .chat-textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      font-family: inherit;
+      resize: none;
+      max-height: 120px;
+      min-height: 24px;
+      line-height: 1.5;
+      padding: 0.3rem 0;
+    }
+
+    .chat-textarea::placeholder {
+      color: var(--text-dim);
+    }
+
+    .send-btn {
+      background: var(--gradient-primary);
+      color: #ffffff;
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .send-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .input-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.45rem;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      padding: 0 0.25rem;
+    }
+
+    .input-hint kbd {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      padding: 1px 4px;
+      font-size: 0.68rem;
+    }
+
+    /* ------------------------------------------------------------------
+       8. TOPICS EXPLORER DRAWER (SLIDE-OVER PANEL)
+       ------------------------------------------------------------------ */
+    .topics-drawer-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-normal);
+    }
+
+    .topics-drawer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .topics-drawer {
+      position: fixed;
+      top: 0;
+      right: -420px;
+      width: 100%;
+      max-width: 400px;
+      height: 100%;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-md);
+      z-index: 101;
+      display: flex;
+      flex-direction: column;
+      transition: right var(--transition-normal);
+    }
+
+    .topics-drawer-backdrop.open .topics-drawer {
+      right: 0;
+    }
+
+    .drawer-header {
+      padding: 1.15rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .drawer-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.4rem;
+      line-height: 1;
+      padding: 0.25rem;
+      border-radius: 4px;
+    }
+
+    .drawer-close-btn:hover {
+      color: var(--text-main);
+    }
+
+    .drawer-search-wrap {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .drawer-search-input {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 0.85rem;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .drawer-search-input:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .drawer-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .topic-group h4 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-cyan);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .topic-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .topic-item-btn {
+      width: 100%;
+      text-align: left;
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 0.75rem;
+      color: var(--text-main);
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topic-item-btn:hover {
+      background: var(--bg-card);
+      border-color: rgba(56, 189, 248, 0.4);
+      color: var(--accent-cyan);
+      transform: translateX(3px);
+    }
+
+    /* ------------------------------------------------------------------
+       9. RESPONSIVE DESIGN BREAKPOINTS
+       ------------------------------------------------------------------ */
+    @media (max-width: 640px) {
+      .app-header {
+        padding: 0.65rem 0.85rem;
+      }
+      .brand-title-wrap p {
+        display: none;
+      }
+      .chat-messages {
+        padding: 1rem 0.85rem;
+      }
+      .message-content-wrapper {
+        max-width: 90%;
+      }
+      .welcome-hero {
+        padding: 1.25rem 1rem;
+      }
+      .welcome-title {
+        font-size: 1.35rem;
+      }
+      .quick-cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .chat-input-area {
+        padding: 0.6rem 0.85rem 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ====================================================================
+       1. APPLICATION HEADER
+       Includes bot branding, status indicator, and quick utility controls
+       ==================================================================== -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-logo" title="Campus Buddy">🎓</div>
+      <div class="brand-title-wrap">
+        <h1 class="brand-name">
+          Campus Buddy
+          <span class="brand-badge">Freshman AI Mentor</span>
+        </h1>
+        <div class="brand-status">
+          <span class="status-dot"></span>
+          <span>Online &bull; 100% Local &bull; No API Keys</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Quick Actions (Topics, Sound FX, Clear, Export) -->
+    <div class="header-actions">
+      <!-- Open Topics Explorer Drawer -->
+      <button id="topicsBtn" class="icon-btn btn-with-label" title="Browse Knowledge Topics">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 12h16M4 18h7"/>
+        </svg>
+        <span class="btn-label-desktop">Topics Guide</span>
+      </button>
+
+      <!-- Toggle Audio Chime -->
+      <button id="soundToggleBtn" class="icon-btn" title="Toggle Sound Feedback">
+        <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+      </button>
+
+      <!-- Clear Chat Transcript -->
+      <button id="clearChatBtn" class="icon-btn" title="Clear Chat History">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+      </button>
+
+      <!-- Export Transcript to File -->
+      <button id="exportChatBtn" class="icon-btn" title="Download Conversation (.txt)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ====================================================================
+       2. MAIN APPLICATION BODY (CHAT AREA)
+       ==================================================================== -->
+  <main class="app-body">
+    <section class="chat-container">
+      
+      <!-- Messages Feed (Scrollable) -->
+      <div id="chatMessages" class="chat-messages">
+        
+        <!-- Welcome Hero Banner -->
+        <div id="welcomeHero" class="welcome-hero">
+          <div class="welcome-badge">🚀 Welcome to College Tech Journey!</div>
+          <h2 class="welcome-title">Hey Freshman! I'm Campus Buddy 👋</h2>
+          <p class="welcome-desc">
+            Your friendly mentor for hackathons, GitHub, web development, college projects, and tech career basics. Ask any question below or click a starter card!
+          </p>
+
+          <!-- 4 Quick Starter Cards -->
+          <div class="quick-cards-grid">
+            <div class="quick-card" data-prompt="How do I win my first college hackathon?">
+              <div class="quick-card-icon">🏆</div>
+              <div class="quick-card-content">
+                <h4>Hackathon Playbook</h4>
+                <p>Team building, pitching, and winning strategies.</p>
+              </div>
+            </div>
+
+            <div class="quick-card" data-prompt="What are the essential Git and GitHub commands?">
+              <div class="quick-card-icon">🐙</div>
+              <div class="quick-card-content">
+                <h4>Git & GitHub Crash Course</h4>
+                <p>How version control works + top commands.</p>
+              </div>
+            </div>
+
+            <div class="quick-card" data-prompt="Explain HTML, CSS, and JavaScript for beginners">
+              <div class="quick-card-icon">🌐</div>
+              <div class="quick-card-content">
+                <h4>Web Dev 101</h4>
+                <p>How HTML, CSS, and JS work together simply.</p>
+              </div>
+            </div>
+
+            <div class="quick-card" data-prompt="Give me beginner college project ideas">
+              <div class="quick-card-icon">💡</div>
+              <div class="quick-card-content">
+                <h4>Freshman Project Ideas</h4>
+                <p>Impressive beginner projects to build for your resume.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Initial Bot Greeting Bubble -->
+        <div class="message-row bot">
+          <div class="message-avatar">🤖</div>
+          <div class="message-content-wrapper">
+            <div class="message-sender-info">
+              <span>Campus Buddy</span>
+              <span>&bull;</span>
+              <span class="timestamp" id="initialTime">Just now</span>
+            </div>
+            <div class="message-bubble">
+              <p>Hi there! 🎒 Starting your tech journey can feel overwhelming, but don't worry—you don't need prior coding experience to excel in college. What's on your mind today?</p>
+              <div class="bot-followups">
+                <button class="followup-chip" data-prompt="How do I prepare for a hackathon?">🎯 Hackathon Checklist</button>
+                <button class="followup-chip" data-prompt="How to make my first Git commit?">🐙 First Git Commit</button>
+                <button class="followup-chip" data-prompt="How to center a div in CSS?">🎨 Center a Div in CSS</button>
+                <button class="followup-chip" data-prompt="Best free resources to learn coding">📚 Free Learning Sites</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Suggestion Chips Carousel -->
+      <div class="suggestions-carousel-wrap">
+        <div class="suggestions-carousel" id="suggestionsCarousel">
+          <button class="suggestion-pill" data-prompt="How to participate in a hackathon?">🏆 How to join a hackathon</button>
+          <button class="suggestion-pill" data-prompt="Difference between Git and GitHub">🐙 Git vs GitHub</button>
+          <button class="suggestion-pill" data-prompt="How to host website on GitHub Pages?">🚀 Free Website Hosting</button>
+          <button class="suggestion-pill" data-prompt="What is an API explained simply?">🔌 What is an API?</button>
+          <button class="suggestion-pill" data-prompt="How to get tech internships in 1st year?">💼 Freshman Internships</button>
+          <button class="suggestion-pill" data-prompt="GitHub Student Developer Pack benefits">🎁 Free Student Developer Pack</button>
+        </div>
+      </div>
+
+      <!-- Chat Input Area -->
+      <footer class="chat-input-area">
+        <form id="chatForm" class="input-form" onsubmit="handleFormSubmit(event)">
+          <textarea
+            id="userInput"
+            class="chat-textarea"
+            rows="1"
+            placeholder="Ask Campus Buddy anything (e.g. 'How to start web dev?', 'Git commands', 'Hackathon tips')..."
+            required
+          ></textarea>
+          <button id="sendBtn" type="submit" class="send-btn" title="Send Message">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </form>
+        <div class="input-meta-bar">
+          <span class="input-hint">Press <kbd>Enter</kbd> to send, <kbd>Shift + Enter</kbd> for new line</span>
+          <span id="charCounter">0 / 400</span>
+        </div>
+      </footer>
+
+    </section>
+  </main>
+
+  <!-- ====================================================================
+       3. TOPICS EXPLORER DRAWER (MODAL OVERLAY)
+       Allows browsing all organized college questions directly
+       ==================================================================== -->
+  <div id="drawerBackdrop" class="topics-drawer-backdrop" onclick="closeTopicsDrawer(event)">
+    <div class="topics-drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <h3 class="drawer-title">
+          <span>📚</span> Topics Explorer
+        </h3>
+        <button class="drawer-close-btn" onclick="toggleTopicsDrawer()" title="Close Drawer">&times;</button>
+      </div>
+
+      <div class="drawer-search-wrap">
+        <input 
+          type="text" 
+          id="drawerSearch" 
+          class="drawer-search-input" 
+          placeholder="Filter topics (e.g. git, flexbox, ideas)..." 
+          oninput="filterDrawerTopics()"
+        />
+      </div>
+
+      <div class="drawer-content" id="drawerContent">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       4. JAVASCRIPT LOGIC & KNOWLEDGE BASE
+       Clean, modular, pure Vanilla JS with beginner-friendly explanations.
+       ==================================================================== -->
+  <script>
+    /* ==================================================================
+       SECTION A: KNOWLEDGE BASE DATA STORE
+       Contains carefully curated college-tech answers, code snippets,
+       and follow-up suggestions for first-year engineering students.
+       ================================================================== */
+    const KNOWLEDGE_BASE = [
+      /* ----------------------------------------------------------------
+         CATEGORY 1: HACKATHONS
+         ---------------------------------------------------------------- */
+      {
+        id: "hackathon-overview",
+        category: "Hackathons",
+        title: "What is a Hackathon & How Does It Work?",
+        keywords: ["hackathon", "what is a hackathon", "hackathons", "participate", "first hackathon", "hackathon beginner", "how do hackathons work"],
+        answer: `A **hackathon** is an invention marathon (typically lasting 24 to 48 hours) where students, developers, and designers team up to build a creative solution to a real-world problem from scratch!
+        
+> **Myth Buster:** Hackathons are NOT about cyber hacking or breaking into security systems. They are about "hacking" together a working prototype or software solution!
+
+**Why participate as a freshman?**
+* **Learn by doing:** You will learn more in 36 hours of building than in weeks of passive video watching.
+* **Networking:** Meet ambitious peers, mentors from top tech companies, and sponsors looking to hire.
+* **Resume Power:** Having a working hackathon project with a GitHub repo immediately sets your resume apart!
+* **Free Swag & Food:** Enjoy free t-shirts, stickers, developer credits, and meals!`,
+        codeSnippet: null,
+        suggestions: ["How to find hackathons", "How to form a hackathon team", "Hackathon winning strategies"]
+      },
+
+      {
+        id: "hackathon-platforms",
+        category: "Hackathons",
+        title: "Where to Find & Register for Hackathons",
+        keywords: ["find hackathons", "hackathon websites", "where to apply", "register hackathon", "hackathon platforms", "devpost", "unstop", "mlh"],
+        answer: `Here are the top platforms where college hackathons are hosted globally and locally:
+
+1. **Devpost (devpost.com):** The gold standard for global student hackathons. Great for filtering by beginner-friendly and virtual events.
+2. **MLH (Major League Hacking - mlh.io):** The official student hackathon league with weekend events, starter workshops, and free hardware kits.
+3. **Unstop (unstop.com):** Extremely popular in colleges for national coding challenges, campus hackathons, and corporate hiring sprints.
+4. **Hackerearth & Hackerrank:** Great for competitive programming and sponsored corporate challenges.
+5. **Your College Tech Clubs:** Join your university's Google Developer Student Club (GDSC), ACM, or CSI chapters for campus hackathons!`,
+        codeSnippet: null,
+        suggestions: ["Hackathon winning strategies", "Hackathon preparation checklist", "Beginner project ideas"]
+      },
+
+      {
+        id: "hackathon-team",
+        category: "Hackathons",
+        title: "How to Build a Winning Hackathon Team",
+        keywords: ["hackathon team", "find team", "team members", "hackathon group", "solo hackathon", "roles"],
+        answer: `The ideal hackathon team size is usually **3 to 4 members**. To maximize your chances, assemble the classic **"3H Rule"**:
+
+* 💻 **The Hacker (Coder / Developer):** Focuses on core logic, writing HTML/CSS/JS or backend APIs.
+* 🎨 **The Hipster (Designer / UI/UX):** Creates wireframes in Figma, picks colors, ensures the website looks gorgeous and intuitive.
+* 📢 **The Hustler (Pitcher / Product Thinker):** Researches the problem, calculates market impact, and delivers a memorable 3-minute presentation.
+
+**Pro-Tip for First-Years:**
+Don't be afraid to team up with classmates who know as little as you! Learning together under pressure creates lifelong friendships and the best learning curve.`,
+        codeSnippet: null,
+        suggestions: ["Hackathon winning strategies", "What is an MVP?", "Hackathon preparation checklist"]
+      },
+
+      {
+        id: "hackathon-winning",
+        category: "Hackathons",
+        title: "Winning Strategies & Pitching Secrets",
+        keywords: ["win hackathon", "winning hackathon", "hackathon tips", "pitching tips", "judging criteria", "how to win"],
+        answer: `Judges at hackathons care far more about **a working prototype solving a clear problem** than a massive project that crashes during the demo!
+
+Follow these 4 golden rules to stand out:
+1. **Build an MVP (Minimum Viable Product):** Keep the scope small. 2 well-functioning features beat 10 half-baked broken buttons every single time.
+2. **Solve a relatable problem:** Real student or campus problems (e.g. food waste, hostel laundry, study group finder) resonate immediately with judges.
+3. **Master the 3-Minute Demo Pitch:**
+   * *Minute 1:* The Problem & Story ("Have you ever experienced...").
+   * *Minute 2:* Live Working Demo (show the app in action, never just slides!).
+   * *Minute 3:* Tech Stack, Future Roadmap, and Q&A.
+4. **Deploy it Live:** Deploying your project on GitHub Pages or Vercel so the judges can open it on their phones gives you instant bonus points!`,
+        codeSnippet: null,
+        suggestions: ["What is an MVP?", "How to host website on GitHub Pages", "Freshman Project Ideas"]
+      },
+
+      {
+        id: "hackathon-checklist",
+        category: "Hackathons",
+        title: "Hackathon Day Checklist",
+        keywords: ["hackathon checklist", "prepare for hackathon", "hackathon prep", "what to bring"],
+        answer: `Before your hackathon kickoff, make sure you have:
+
+* ✅ **Environment Ready:** VS Code installed with Live Server and Prettier extensions.
+* ✅ **GitHub Repository Set Up:** Create the repo and invite all teammates as collaborators before hacking starts.
+* ✅ **Boilerplate Template:** Have a clean HTML/CSS/JS template ready so you don't waste 1 hour setting up files.
+* ✅ **Figma or Pen & Paper:** Sketch the app screens before writing a single line of code!
+* ✅ **Presentation Slides (Canva/Google Slides):** Start drafting your pitch deck 4 hours before the deadline—don't leave it to the last 15 minutes!`,
+        codeSnippet: null,
+        suggestions: ["What are the essential Git and GitHub commands?", "Explain HTML, CSS, and JavaScript for beginners"]
+      },
+
+      /* ----------------------------------------------------------------
+         CATEGORY 2: GIT & GITHUB
+         ---------------------------------------------------------------- */
+      {
+        id: "git-vs-github",
+        category: "Git & GitHub",
+        title: "Git vs. GitHub: What's the Difference?",
+        keywords: ["git vs github", "difference git github", "what is git", "what is github", "version control"],
+        answer: `Many beginners confuse **Git** and **GitHub**, but they are two distinct things:
+
+* 🛠️ **Git (The Tool):** A local version control software installed on your computer. It tracks changes to your code like "save points" in a video game, allowing you to undo mistakes.
+* ☁️ **GitHub (The Platform):** A cloud-based website that hosts your Git repositories. It allows you to share code, collaborate with teammates worldwide, and showcase your portfolio.
+
+**Analogy:** Git is like your camera taking photos; GitHub is like Instagram where you upload and share those photos!`,
+        codeSnippet: null,
+        suggestions: ["Top essential Git commands", "How to make my first Git commit", "How to host website on GitHub Pages"]
+      },
+
+      {
+        id: "git-essential-commands",
+        category: "Git & GitHub",
+        title: "Top 7 Essential Git Commands Cheat Sheet",
+        keywords: ["git commands", "git cheat sheet", "git commands list", "essential git commands", "git push", "git commit", "git add"],
+        answer: `Here are the daily Git commands every developer uses:
+
+* \`git init\` &rarr; Initializes a new local Git repository in your folder.
+* \`git status\` &rarr; Checks what files were modified or untracked.
+* \`git add .\` &rarr; Stages all changed files for the next commit.
+* \`git commit -m "Your message"\` &rarr; Saves a snapshot of your staged files with a description.
+* \`git push origin main\` &rarr; Uploads your local commits to GitHub.
+* \`git pull origin main\` &rarr; Downloads the latest code updates from GitHub to your machine.
+* \`git clone <url>\` &rarr; Copies a remote repository to your local computer.`,
+        codeSnippet: `# Standard 3-step Git workflow:
+git add .
+git commit -m "Added modern responsive navbar"
+git push origin main`,
+        suggestions: ["How to make my first Git commit", "How to host website on GitHub Pages", "What is a merge conflict?"]
+      },
+
+      {
+        id: "git-first-commit",
+        category: "Git & GitHub",
+        title: "Step-by-Step: Your Very First GitHub Push",
+        keywords: ["first commit", "first github push", "upload project github", "how to use github", "push to github"],
+        answer: `Follow these exact steps to upload your project to GitHub for the first time:
+
+1. Go to **github.com** and click **New Repository** (give it a name like \`my-first-project\`).
+2. Leave "Initialize with README" unchecked for an existing folder.
+3. Open your terminal inside your project folder and run:`,
+        codeSnippet: `# 1. Initialize git locally
+git init
+
+# 2. Add all your files to staging
+git add .
+
+# 3. Create your first commit
+git commit -m "Initial commit - my first project"
+
+# 4. Rename default branch to main
+git branch -M main
+
+# 5. Link your local repo to GitHub (replace with your repo URL)
+git remote add origin https://github.com/your-username/my-first-project.git
+
+# 6. Push your files to GitHub!
+git push -u origin main`,
+        suggestions: ["How to host website on GitHub Pages", "Top essential Git commands", "What is a README file?"]
+      },
+
+      {
+        id: "github-pages",
+        category: "Git & GitHub",
+        title: "How to Host Your Website Free on GitHub Pages",
+        keywords: ["github pages", "host website free", "publish website", "deploy html", "free hosting"],
+        answer: `GitHub Pages gives you **100% free web hosting** directly from your repository!
+
+**How to enable it:**
+1. Push your project to GitHub (ensure your main HTML file is named strictly **\`index.html\`** in lowercase).
+2. Go to your repository on GitHub.com and click **Settings** (top right tab).
+3. In the left sidebar, click **Pages**.
+4. Under **"Build and deployment" > Branch**, change from \`None\` to **\`main\`** (or \`master\`), keep folder as \`/ (root)\`, and click **Save**.
+5. Wait 60 seconds! GitHub will provide a live link:
+   \`https://your-username.github.io/your-repo-name/\`
+
+Share this link with your friends, judges, and on your LinkedIn profile!`,
+        codeSnippet: null,
+        suggestions: ["Step-by-Step: Your Very First GitHub Push", "Freshman Project Ideas", "What is a README file?"]
+      },
+
+      {
+        id: "github-readme",
+        category: "Git & GitHub",
+        title: "How to Write an Impressive GitHub README",
+        keywords: ["readme", "github profile", "readme.md", "project documentation", "markdown"],
+        answer: `A project without a **README.md** looks abandoned. A great README takes 10 minutes to write and instantly impresses recruiters:
+
+**Include these 5 sections:**
+1. **Project Title & Catchy Tagline:** What problem does it solve?
+2. **Live Demo Link & Screenshot:** Let people see it before reading the code.
+3. **Features List:** Bullet points of key functionality.
+4. **Tech Stack Badges:** (e.g. HTML5, CSS3, JavaScript).
+5. **How to Run Locally:** Clear instructions for anyone cloning your repository.`,
+        codeSnippet: `# Campus Buddy 🎓
+A lightweight, beginner-friendly tech mentor chatbot for college freshmen.
+
+## 🚀 Live Demo
+[Click to View Campus Buddy](https://your-username.github.io/CampusBuddy)
+
+## 🛠️ Built With
+- Pure HTML5
+- Vanilla CSS3 (Custom Properties & Flexbox)
+- Modern Vanilla JavaScript (ES6+)`,
+        suggestions: ["How to host website on GitHub Pages", "Top essential Git commands"]
+      },
+
+      /* ----------------------------------------------------------------
+         CATEGORY 3: HTML, CSS & JAVASCRIPT
+         ---------------------------------------------------------------- */
+      {
+        id: "web-dev-basics",
+        category: "Web Development",
+        title: "HTML, CSS & JavaScript Explained for Beginners",
+        keywords: ["html css js", "explain html css javascript", "web development 101", "frontend basics", "how web works"],
+        answer: `The easiest way to understand frontend web development is the **Human Body Analogy**:
+
+* 🦴 **HTML (HyperText Markup Language) = The Skeleton:**
+  Defines structure and content: headings, paragraphs, buttons, images, and text boxes.
+* 🎨 **CSS (Cascading Style Sheets) = The Clothes & Appearance:**
+  Controls colors, fonts, layouts, animations, dark mode, and mobile responsiveness.
+* 🧠 **JavaScript (JS) = The Brain & Muscles:**
+  Makes the page interactive! Handles button clicks, calculates math, fetches data, and responds to user inputs.
+
+All three run directly in your browser without needing any compiler!`,
+        codeSnippet: null,
+        suggestions: ["How to center a div in CSS?", "Flexbox vs. CSS Grid", "What is the DOM & DOM Manipulation?"]
+      },
+
+      {
+        id: "css-center-div",
+        category: "Web Development",
+        title: "How to Center a Div in CSS (The 3 Best Ways)",
+        keywords: ["center a div", "center div", "css centering", "center content css", "flexbox center"],
+        answer: `Centering an element in CSS used to be notoriously tricky, but modern CSS makes it effortless!
+
+**Method 1: Flexbox (Recommended & most popular):**`,
+        codeSnippet: `/* Apply this to the parent container: */
+.parent-container {
+  display: flex;
+  justify-content: center; /* Horizontally centers children */
+  align-items: center;     /* Vertically centers children */
+  min-height: 100vh;       /* Gives container full screen height */
+}`,
+        suggestions: ["Flexbox vs. CSS Grid", "HTML, CSS & JavaScript Explained for Beginners"]
+      },
+
+      {
+        id: "css-flexbox-grid",
+        category: "Web Development",
+        title: "Flexbox vs. CSS Grid: When to Use Which?",
+        keywords: ["flexbox vs grid", "css flexbox", "css grid", "when to use flexbox", "when to use grid"],
+        answer: `Both Flexbox and Grid are powerful modern CSS layout modules. Here is the simple rule of thumb:
+
+* 📐 **Use Flexbox for 1-Dimensional layouts:**
+  When you are arranging items in a single direction—either a single row (horizontal) OR a single column (vertical).
+  * *Examples:* Navbars, button groups, chat bubbles, avatar + username rows.
+* 🔲 **Use CSS Grid for 2-Dimensional layouts:**
+  When you need to arrange items in both rows AND columns simultaneously.
+  * *Examples:* Photo galleries, dashboard widgets, product catalog grids.`,
+        codeSnippet: `/* CSS Grid Example for responsive cards: */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}`,
+        suggestions: ["How to center a div in CSS?", "HTML, CSS & JavaScript Explained for Beginners"]
+      },
+
+      {
+        id: "js-dom",
+        category: "Web Development",
+        title: "What is the DOM & DOM Manipulation in JavaScript?",
+        keywords: ["dom", "what is dom", "dom manipulation", "document queryselector", "addeventlistener", "javascript dom"],
+        answer: `**DOM** stands for **Document Object Model**. When your browser loads an HTML file, it turns the HTML tags into a JavaScript tree of objects!
+
+Through the DOM, JavaScript can:
+1. Find elements on the page (\`document.querySelector\`).
+2. Listen for user actions like clicks or typing (\`addEventListener\`).
+3. Change text or HTML dynamically (\`element.textContent\` or \`element.innerHTML\`).
+4. Add or remove CSS classes (\`element.classList.toggle\`).`,
+        codeSnippet: `// 1. Select the button and output elements
+const myButton = document.querySelector('#actionBtn');
+const myText = document.querySelector('#statusText');
+
+// 2. Listen for a click event
+myButton.addEventListener('click', () => {
+  myText.textContent = "Button was clicked successfully! 🎉";
+  myText.style.color = "#38bdf8";
+});`,
+        suggestions: ["HTML, CSS & JavaScript Explained for Beginners", "How to Debug Common Beginner JavaScript Errors"]
+      },
+
+      {
+        id: "js-errors",
+        category: "Web Development",
+        title: "How to Debug Common Beginner JavaScript Errors",
+        keywords: ["javascript errors", "debug javascript", "console.log", "uncaught typeerror", "inspect element", "f12"],
+        answer: `When your JavaScript isn't working, **do not guess!** Use your browser's built-in developer tools:
+
+1. **Press F12 (or right-click anywhere and select Inspect).**
+2. Click the **Console** tab at the top. Any errors will appear in red!
+3. **Common errors explained:**
+   * \`Uncaught TypeError: Cannot read properties of null\`: You tried to select an HTML element using \`document.querySelector\`, but you misspelled the class or ID, or the script ran before the HTML loaded!
+   * \`Uncaught ReferenceError: x is not defined\`: You forgot to declare a variable with \`const\` or \`let\`, or made a spelling typo.
+   * **The Golden Debugging Tool:** Use \`console.log(variableName);\` generously to inspect what values your code is holding at every step!`,
+        codeSnippet: `// Check if your element was found before using it:
+const btn = document.querySelector('.my-button');
+console.log("Found button element:", btn);
+
+if (btn) {
+  btn.addEventListener('click', () => console.log("Clicked!"));
+} else {
+  console.error("Button was not found in the DOM!");
+}`,
+        suggestions: ["What is the DOM & DOM Manipulation?", "Best Free Resources to Learn Coding"]
+      },
+
+      /* ----------------------------------------------------------------
+         CATEGORY 4: COLLEGE PROJECT IDEAS & ROADMAPS
+         ---------------------------------------------------------------- */
+      {
+        id: "project-ideas-freshman",
+        category: "Projects",
+        title: "10 Impressive Beginner Project Ideas for College",
+        keywords: ["project ideas", "beginner projects", "college project ideas", "freshman projects", "portfolio projects", "what to build"],
+        answer: `Here are 10 projects that recruiters love seeing on freshman resumes, ranked from beginner to intermediate:
+
+**Level 1: Pure HTML/CSS/JS (Great for Month 1-2):**
+1. **Interactive Portfolio Website:** Showcase your bio, projects, and social links with dark mode toggle.
+2. **Campus Habit / Attendance Tracker:** Calculate whether your attendance meets the mandatory 75% college threshold.
+3. **Interactive College Quiz App:** Multiple-choice quiz on programming or pop culture with score calculation.
+4. **Markdown Notes App:** Write notes stored in the browser's \`localStorage\` so data persists on refresh.
+
+**Level 2: Interactive Web Apps (Great for Hackathons):**
+5. **Campus Lost & Found Notice Board:** Post missing student IDs, water bottles, and textbooks.
+6. **Student Expense Splitter:** Split hostel dinner and event bills evenly among roommates.
+7. **Study Room Pomodoro Timer:** Study timer with ambient lo-fi sounds and customizable work/break intervals.
+8. **GitHub User Finder:** Fetches and displays GitHub profiles and repositories using the free public GitHub API.
+9. **College Event Countdown Hub:** Live countdowns to upcoming exams, fests, and hackathons.
+10. **Book / Notes Exchange Portal:** Exchange semester textbooks and lecture summaries with seniors.`,
+        codeSnippet: null,
+        suggestions: ["How to Build a Coding Project from Scratch", "What is an MVP?", "How to Showcase Projects on Your Resume"]
+      },
+
+      {
+        id: "project-roadmap",
+        category: "Projects",
+        title: "How to Build a Coding Project from Scratch (5-Step Roadmap)",
+        keywords: ["build project from scratch", "project roadmap", "how to start a project", "project development steps"],
+        answer: `Follow this exact 5-step engineering process to build any project without getting stuck:
+
+* **Step 1: Write a 1-Paragraph Problem Statement:** What annoyance does this solve? Who is it for?
+* **Step 2: Wireframe on Paper:** Draw the 2-3 main screens with a pen and notepad before opening your code editor.
+* **Step 3: Define the MVP (Minimum Viable Product):** Strip away 80% of unnecessary features. Identify the 1 core feature that MUST work first.
+* **Step 4: Build Skeleton &rarr; Style &rarr; Logic:**
+  1. Write basic HTML structure.
+  2. Apply CSS styling and layout.
+  3. Wire up JavaScript event listeners and interactivity.
+* **Step 5: Deploy & Document:** Deploy on GitHub Pages and write a clean README with screenshots!`,
+        codeSnippet: null,
+        suggestions: ["10 Impressive Beginner Project Ideas for College", "What is an MVP?", "How to Write an Impressive GitHub README"]
+      },
+
+      {
+        id: "project-resume",
+        category: "Projects",
+        title: "How to Showcase Projects on Your Resume & LinkedIn",
+        keywords: ["resume projects", "showcase project", "linkedin project", "add to resume", "resume tips"],
+        answer: `When listing your project on a tech resume, use Google's famous **XYZ Formula**:
+> *"Accomplished [X], as measured by [Y], by doing [Z]."*
+
+**Bad Resume Bullet:**
+* "Built a chatbot website using HTML, CSS, and JS."
+
+**Winning Resume Bullet:**
+* "Architected **Campus Buddy**, a responsive client-side tech advisory web app serving 150+ freshmen; integrated custom keyword intent-recognition engine in Vanilla JavaScript with zero external dependencies."
+
+**Always include:**
+* Direct link to GitHub repository.
+* Live hosted website demo link.
+* 3-4 bullet points highlighting technical challenges and achievements.`,
+        codeSnippet: null,
+        suggestions: ["10 Impressive Beginner Project Ideas for College", "How to Write an Impressive GitHub README"]
+      },
+
+      /* ----------------------------------------------------------------
+         CATEGORY 5: BASIC CODING CONCEPTS & LEARNING RESOURCES
+         ---------------------------------------------------------------- */
+      {
+        id: "what-is-api",
+        category: "Coding Concepts",
+        title: "What is an API? (The Restaurant Waiter Analogy)",
+        keywords: ["api", "what is an api", "api explained", "application programming interface", "rest api"],
+        answer: `**API** stands for **Application Programming Interface**. It is simply a bridge that lets two different software applications talk to each other!
+
+**The Classic Restaurant Analogy:**
+* 🍽️ **You (The Client / Frontend Website):** You sit at the table looking at the menu.
+* 🍳 **The Kitchen (The Database / Server):** The kitchen prepares the food, but you aren't allowed to walk into the kitchen yourself.
+* 🤵 **The Waiter (The API):** The waiter takes your order, delivers it to the kitchen, and brings back the cooked dish (data) to your table!
+
+*Example:* A weather website doesn't launch its own satellites into space; it sends a request to a Weather API to fetch satellite data!`,
+        codeSnippet: `// Example of fetching data from an API in JavaScript:
+fetch('https://api.github.com/users/octocat')
+  .then(response => response.json())
+  .then(data => console.log("User name:", data.name))
+  .catch(error => console.error("Error fetching data:", error));`,
+        suggestions: ["HTML, CSS & JavaScript Explained for Beginners", "Best Free Resources to Learn Coding"]
+      },
+
+      {
+        id: "learning-resources",
+        category: "Coding Concepts",
+        title: "Best Free Resources to Learn Coding (Zero Cost)",
+        keywords: ["free resources", "learn coding free", "best websites learn programming", "freecodecamp", "the odin project", "learning roadmap"],
+        answer: `You never need to pay thousands for coding bootcamps as a freshman! The world's best resources are completely free:
+
+1. **freeCodeCamp.org:** 100% free, interactive curriculum with hands-on certifications in Responsive Web Design, JavaScript, and Python.
+2. **The Odin Project (theodinproject.com):** The gold standard for self-taught web developers. Teaches you how to build real projects on your local machine.
+3. **MDN Web Docs (developer.mozilla.org):** The definitive, official documentation for HTML, CSS, and JavaScript.
+4. **Harvard CS50x (edX / YouTube):** Professor David Malan's world-famous introduction to computer science. Engaging, rigorous, and inspiring.
+5. **Roadmap.sh:** Interactive visual roadmaps for Frontend, Backend, DevOps, AI, and CS students.
+6. **YouTube Mentors:** Kevin Powell (CSS wizardry), Web Dev Simplified, Bro Code, and Traversy Media.`,
+        codeSnippet: null,
+        suggestions: ["How to Escape Tutorial Hell", "What Tech Stack Should a Freshman Choose?"]
+      },
+
+      {
+        id: "tutorial-hell",
+        category: "Coding Concepts",
+        title: "How to Avoid & Escape 'Tutorial Hell'",
+        keywords: ["tutorial hell", "cannot code without video", "stuck in tutorials", "learn by doing", "how to practice coding"],
+        answer: `**Tutorial Hell** is the trap of watching 50 hours of coding videos, following along step-by-step, but freezing when you open a blank code file on your own.
+
+**How to break free using the 70/30 Rule:**
+* **30% Time:** Spend watching or reading the concept.
+* **70% Time:** Close the tutorial video and build something small on your own!
+
+**Action Plan:**
+1. When you finish a tutorial for a calculator app, **don't move to another tutorial**. Instead, try adding 2 new features without watching the video (e.g., add a percentage button or change the color theme).
+2. Google specific problems like *"how to make a button round in CSS"* instead of watching *"Full 10-hour CSS Course"*.
+3. Embrace errors! Every red error in your console is a step toward becoming a real engineer.`,
+        codeSnippet: null,
+        suggestions: ["10 Impressive Beginner Project Ideas for College", "How to Build a Coding Project from Scratch"]
+      },
+
+      /* ----------------------------------------------------------------
+         CATEGORY 6: GENERAL COLLEGE TECH & CAREER QUESTIONS
+         ---------------------------------------------------------------- */
+      {
+        id: "tech-stack-choice",
+        category: "College & Career",
+        title: "What Tech Stack Should a Freshman Choose?",
+        keywords: ["tech stack", "what should i learn", "python or java", "web dev or ai", "which programming language first"],
+        answer: `Don't worry about picking the "perfect" language—programming fundamentals (variables, loops, logic) transfer between all languages! Here is a simple guide based on your interest:
+
+* 🌐 **If you want visual results fast:** Learn **Web Development (HTML &rarr; CSS &rarr; JavaScript)**. You can see your creations instantly in the browser and share links with friends!
+* 🤖 **If you are fascinated by Data & AI:** Learn **Python**. It has the gentlest syntax and dominates Machine Learning, Data Science, and automation scripting.
+* 🏆 **If you want to crack campus placement exams / DSA:** Learn **C++ or Java**. They build rock-solid memory and object-oriented programming (OOP) foundations.
+* 📱 **If you want to make phone apps:** Learn **Flutter (Dart)** or **React Native (JavaScript)**.
+
+**Freshman Advice:** Pick ONE track and stick with it for 3 to 6 months before jumping to something new. Consistency beats dabbling!`,
+        codeSnippet: null,
+        suggestions: ["HTML, CSS & JavaScript Explained for Beginners", "GitHub Student Developer Pack benefits"]
+      },
+
+      {
+        id: "github-student-pack",
+        category: "College & Career",
+        title: "GitHub Student Developer Pack: Claim $200k+ in Free Perks!",
+        keywords: ["github student pack", "student developer pack", "free student perks", "github student", "free domain student"],
+        answer: `As a college student with a university \`.edu\` or college email ID (or college ID card), you can claim the **GitHub Student Developer Pack** completely free!
+
+**Top Free Perks Included:**
+* 🆓 **GitHub Copilot:** Free AI pair programmer while you are a student!
+* 🌐 **Free Domain Names:** 1 year free \`.me\` or \`.tech\` domain from Namecheap / Name.com.
+* 💻 **Free Cloud Credits:** DigitalOcean (\$200 credits), Microsoft Azure (\$100 credits), and Heroku.
+* 🛠️ **JetBrains All Products Pack:** Free licenses for IntelliJ, PyCharm, WebStorm, and CLion.
+* 🎨 **Canva Pro:** Free 12 months for presentations and pitch decks.
+* 🎓 **Free Datacamp & Frontend Masters:** Free access to top tier interactive learning courses.
+
+**How to claim:** Visit **education.github.com/pack** and upload your student ID proof!`,
+        codeSnippet: null,
+        suggestions: ["Git vs. GitHub: What's the Difference?", "How to Get Tech Internships in 1st & 2nd Year"]
+      },
+
+      {
+        id: "freshman-internships",
+        category: "College & Career",
+        title: "How to Get Tech Internships in 1st & 2nd Year",
+        keywords: ["internship", "freshman internship", "get internship", "college placement", "first year job"],
+        answer: `Getting an internship as a first-year student is challenging because companies usually recruit 3rd-year students, but you can stand out with these strategies:
+
+1. **Target Early-Stage Startups:** Giant tech companies have strict year filters. Early-stage startups care purely about whether you can build things. Search on AngelList (Wellfound) and LinkedIn.
+2. **Build a Public Portfolio:** Having 2 deployed, working projects with clean GitHub code puts you ahead of 90% of students who only have textbook theory.
+3. **Contribute to Open Source:** Participate in **Hacktoberfest** (every October) or Google Summer of Code (GSoC). Finding "Good First Issues" on GitHub proves you can work with production code.
+4. **Network on Twitter/X and LinkedIn:** Share what you are building (#100DaysOfCode). Many founders hire interns directly through DMs when they see consistent learning!`,
+        codeSnippet: null,
+        suggestions: ["10 Impressive Beginner Project Ideas for College", "How to Write an Impressive GitHub README"]
+      },
+
+      {
+        id: "academics-vs-coding",
+        category: "College & Career",
+        title: "How to Balance College GPA with Self-Taught Coding",
+        keywords: ["gpa vs coding", "balance college", "manage time college", "studies and coding", "cgpa"],
+        answer: `The common dilemma: *"Should I focus on my college CGPA or learn coding?"*
+The answer is: **You need both, but with smart prioritization.**
+
+* 🎯 **The CGPA Target:** Keep your CGPA above **7.5 or 8.0 (out of 10)**. This ensures you pass the initial cutoff resume filter for 95% of campus placement drives.
+* ⏰ **The 1-Hour Daily Rule:** Dedicate just 1 focused hour every evening to personal coding. 1 hour every day beats cramming 10 hours on Sunday and burning out.
+* 🔄 **Overlap Coursework with Projects:** When a college professor assigns an open-ended course project, build a modern web app instead of a generic PowerPoint presentation!`,
+        codeSnippet: null,
+        suggestions: ["What Tech Stack Should a Freshman Choose?", "Best Free Resources to Learn Coding"]
+      }
+    ];
+
+    /* ==================================================================
+       SECTION B: APPLICATION STATE & AUDIO SYNTHESIS
+       ================================================================== */
+    const state = {
+      isSoundEnabled: true,
+      audioCtx: null,
+      messageHistory: []
+    };
+
+    // Initialize Web Audio API on first user interaction for subtle blip sounds (100% offline)
+    function playBeep(type = "bot") {
+      if (!state.isSoundEnabled) return;
+      try {
+        if (!state.audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) state.audioCtx = new AudioContext();
+        }
+        if (state.audioCtx && state.audioCtx.state === 'suspended') {
+          state.audioCtx.resume();
+        }
+        if (!state.audioCtx) return;
+
+        const osc = state.audioCtx.createOscillator();
+        const gain = state.audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(state.audioCtx.destination);
+
+        const now = state.audioCtx.currentTime;
+        if (type === "user") {
+          // Soft short click
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(660, now + 0.08);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else {
+          // Warm harmonic double chime
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.07); // E5
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        }
+      } catch (e) {
+        // Audio error silently ignored
+      }
+    }
+
+    /* ==================================================================
+       SECTION C: INTENT RECOGNITION & SEARCH ENGINE
+       Matches user queries against knowledge base keywords and intents
+       ================================================================== */
+    function normalizeQuery(text) {
+      return text
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function findBestResponse(userText) {
+      const clean = normalizeQuery(userText);
+      if (!clean) return null;
+
+      // 1. Direct Casual Conversation & Greetings
+      const greetings = ["hi", "hello", "hey", "hola", "sup", "good morning", "good evening", "namaste"];
+      if (greetings.some(g => clean === g || clean.startsWith(g + " "))) {
+        return {
+          title: "Hello there!",
+          answer: `Hey! 👋 Welcome to **Campus Buddy**. I'm here to help you navigate college tech life—from hackathons and Git to web development and project ideas.
+
+What would you like to explore today?`,
+          suggestions: ["How do I participate in a hackathon?", "Explain Git and GitHub", "Give me beginner project ideas", "Best free learning resources"]
+        };
+      }
+
+      // 2. Bot Identity & Help Inquiries
+      if (clean.includes("who are you") || clean.includes("what can you do") || clean === "help" || clean === "about") {
+        return {
+          title: "About Campus Buddy",
+          answer: `I am **Campus Buddy**, your personal freshman tech mentor! 🎒
+
+I can help you with:
+* 🏆 **Hackathons:** How to join, prepare, form teams, and pitch to win.
+* 🐙 **Git & GitHub:** Version control, essential commands, and free hosting.
+* 🌐 **Web Development:** HTML, CSS, JavaScript, Flexbox, and debugging.
+* 💡 **Project Ideas:** 10+ resume-ready project blueprints for freshmen.
+* 📚 **Free Learning:** MDN, freeCodeCamp, CS50, and avoiding tutorial hell.
+* 🎓 **College Guidance:** Tech career choices, internship prep, and student perks.`,
+          suggestions: ["Top essential Git commands", "How to center a div in CSS?", "Hackathon winning strategies"]
+        };
+      }
+
+      // 3. Gratitude Responses
+      if (clean === "thanks" || clean.includes("thank you") || clean.includes("awesome") || clean.includes("great help")) {
+        return {
+          title: "You are welcome!",
+          answer: `You're very welcome! 😊 Remember: every senior software engineer started right where you are today. Keep building, stay curious, and don't hesitate to ask if you have more questions!`,
+          suggestions: ["Freshman project ideas", "How to host website on GitHub Pages", "GitHub Student Developer Pack"]
+        };
+      }
+
+      // 4. Keyword & Multi-token Scoring Match
+      let bestItem = null;
+      let highestScore = 0;
+      const queryTokens = clean.split(" ").filter(t => t.length > 2);
+
+      KNOWLEDGE_BASE.forEach(item => {
+        let score = 0;
+
+        // Check each keyword configured for this topic
+        item.keywords.forEach(kw => {
+          const cleanKw = normalizeQuery(kw);
+          
+          // Exact phrase match (Highest Priority)
+          if (clean.includes(cleanKw)) {
+            score += 15;
+          }
+
+          // Individual token matches
+          queryTokens.forEach(token => {
+            if (cleanKw.includes(token)) {
+              score += 3;
+            }
+          });
+        });
+
+        // Extra boost if query words match item title or category
+        if (clean.includes(item.category.toLowerCase())) score += 5;
+        const cleanTitle = normalizeQuery(item.title);
+        queryTokens.forEach(token => {
+          if (cleanTitle.includes(token)) score += 2;
+        });
+
+        if (score > highestScore) {
+          highestScore = score;
+          bestItem = item;
+        }
+      });
+
+      // Threshold check: Must have at least 6 points for a relevant match
+      if (highestScore >= 6 && bestItem) {
+        return bestItem;
+      }
+
+      // 5. Intelligent Fallback (Guides the user when query is ambiguous)
+      return {
+        title: "I'm still learning!",
+        answer: `I didn't quite catch that specific question, but I'm here to help you with anything related to **Hackathons**, **Git & GitHub**, **Web Development (HTML/CSS/JS)**, **College Projects**, or **Tech Internships**!
+
+Try clicking one of the popular topics below, or click the **Topics Guide** button at the top:`,
+        suggestions: [
+          "How to participate in a hackathon?",
+          "Top essential Git commands",
+          "Explain HTML, CSS, and JavaScript",
+          "10 beginner college project ideas",
+          "GitHub Student Developer Pack"
+        ]
+      };
+    }
+
+    /* ==================================================================
+       SECTION D: UI RENDERING & MESSAGE FORMATTING
+       ================================================================== */
+    const chatMessagesEl = document.getElementById("chatMessages");
+    const userInputEl = document.getElementById("userInput");
+    const charCounterEl = document.getElementById("charCounter");
+    const sendBtnEl = document.getElementById("sendBtn");
+    const welcomeHeroEl = document.getElementById("welcomeHero");
+
+    // Format Current Time (e.g. "10:30 AM")
+    function getFormattedTime() {
+      const now = new Date();
+      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Initialize initial greeting timestamp
+    document.getElementById("initialTime").textContent = getFormattedTime();
+
+    // Helper: Escape HTML to prevent injection
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Markdown-style formatting parser for bot responses
+    function formatBotText(rawText) {
+      let formatted = escapeHtml(rawText);
+
+      // Bold: **text**
+      formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+      // Inline Code: `code`
+      formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+      // Bullet Lists: * item
+      formatted = formatted.replace(/(?:^|\n)\* (.*?)(?=(?:\n|$))/g, '\n<li>$1</li>');
+      formatted = formatted.replace(/(<li>.*?<\/li>)/gs, '<ul>$1</ul>');
+      formatted = formatted.replace(/<\/ul>\s*<ul>/g, '');
+
+      // Numbered Lists: 1. item
+      formatted = formatted.replace(/(?:^|\n)\d+\. (.*?)(?=(?:\n|$))/g, '\n<li>$1</li>');
+      formatted = formatted.replace(/(<li>.*?<\/li>)/gs, '<ol>$1</ol>');
+      formatted = formatted.replace(/<\/ol>\s*<ol>/g, '');
+
+      // Line breaks into paragraphs
+      const paragraphs = formatted.split(/\n\s*\n/).map(p => {
+        p = p.trim();
+        if (p.startsWith('<ul>') || p.startsWith('<ol>')) return p;
+        return `<p>${p.replace(/\n/g, '<br/>')}</p>`;
+      }).join('');
+
+      return paragraphs;
+    }
+
+    // Add User Message to Chat
+    function appendUserMessage(text) {
+      const time = getFormattedTime();
+      const row = document.createElement("div");
+      row.className = "message-row user";
+      row.innerHTML = `
+        <div class="message-avatar">👤</div>
+        <div class="message-content-wrapper">
+          <div class="message-sender-info">
+            <span>You</span>
+            <span>&bull;</span>
+            <span>${time}</span>
+          </div>
+          <div class="message-bubble">
+            <p>${escapeHtml(text)}</p>
+          </div>
+        </div>
+      `;
+      chatMessagesEl.appendChild(row);
+      scrollToBottom();
+      state.messageHistory.push({ sender: "You", text, time });
+    }
+
+    // Add Typing Indicator
+    function showTypingIndicator() {
+      const row = document.createElement("div");
+      row.className = "message-row bot";
+      row.id = "typingIndicatorRow";
+      row.innerHTML = `
+        <div class="message-avatar">🤖</div>
+        <div class="message-content-wrapper">
+          <div class="message-sender-info">
+            <span>Campus Buddy</span>
+            <span>&bull;</span>
+            <span>Thinking...</span>
+          </div>
+          <div class="typing-indicator">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+        </div>
+      `;
+      chatMessagesEl.appendChild(row);
+      scrollToBottom();
+    }
+
+    function removeTypingIndicator() {
+      const indicator = document.getElementById("typingIndicatorRow");
+      if (indicator) indicator.remove();
+    }
+
+    // Add Bot Message to Chat
+    function appendBotMessage(responseObj) {
+      removeTypingIndicator();
+      const time = getFormattedTime();
+      const row = document.createElement("div");
+      row.className = "message-row bot";
+
+      let codeHtml = "";
+      if (responseObj.codeSnippet) {
+        const uniqueId = "code_" + Math.random().toString(36).substr(2, 9);
+        codeHtml = `
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span>Code Snippet</span>
+              <button class="copy-code-btn" onclick="copyCodeSnippet('${uniqueId}', this)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Code</span>
+              </button>
+            </div>
+            <pre><code id="${uniqueId}">${escapeHtml(responseObj.codeSnippet)}</code></pre>
+          </div>
+        `;
+      }
+
+      let followupsHtml = "";
+      if (responseObj.suggestions && responseObj.suggestions.length > 0) {
+        const chips = responseObj.suggestions
+          .map(s => `<button class="followup-chip" data-prompt="${escapeHtml(s)}">${escapeHtml(s)}</button>`)
+          .join("");
+        followupsHtml = `<div class="bot-followups">${chips}</div>`;
+      }
+
+      row.innerHTML = `
+        <div class="message-avatar">🤖</div>
+        <div class="message-content-wrapper">
+          <div class="message-sender-info">
+            <span>Campus Buddy</span>
+            <span>&bull;</span>
+            <span>${time}</span>
+          </div>
+          <div class="message-bubble">
+            ${formatBotText(responseObj.answer)}
+            ${codeHtml}
+            ${followupsHtml}
+          </div>
+        </div>
+      `;
+
+      chatMessagesEl.appendChild(row);
+      playBeep("bot");
+      scrollToBottom();
+
+      state.messageHistory.push({ 
+        sender: "Campus Buddy", 
+        text: responseObj.answer + (responseObj.codeSnippet ? "\n\n" + responseObj.codeSnippet : ""), 
+        time 
+      });
+    }
+
+    function scrollToBottom() {
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    }
+
+    // Copy Code Helper with Fallback
+    function copyCodeSnippet(elementId, btnElement) {
+      const codeEl = document.getElementById(elementId);
+      if (!codeEl) return;
+      const textToCopy = codeEl.textContent;
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(textToCopy).then(() => showCopiedFeedback(btnElement));
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = textToCopy;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          showCopiedFeedback(btnElement);
+        } catch (err) {
+          console.error('Fallback copy error', err);
+        }
+        document.body.removeChild(textArea);
+      }
+    }
+
+    function showCopiedFeedback(btnElement) {
+      const originalText = btnElement.innerHTML;
+      btnElement.innerHTML = `<span>Copied! ✓</span>`;
+      btnElement.style.color = "#34d399";
+      setTimeout(() => {
+        btnElement.innerHTML = originalText;
+        btnElement.style.color = "";
+      }, 2000);
+    }
+
+    /* ==================================================================
+       SECTION E: INTERACTION & INPUT HANDLING
+       ================================================================== */
+    function askQuestion(text) {
+      if (!text || !text.trim()) return;
+      userInputEl.value = text.trim();
+      handleFormSubmit(new Event('submit'));
+    }
+    window.askQuestion = askQuestion;
+
+    // Delegated click event listener for starter cards, followup chips, and suggestion pills
+    document.addEventListener("click", function(e) {
+      const target = e.target.closest("[data-prompt]");
+      if (target) {
+        const promptText = target.getAttribute("data-prompt");
+        if (promptText) {
+          askQuestion(promptText);
+        }
+      }
+    });
+
+    function handleFormSubmit(e) {
+      if (e) e.preventDefault();
+      const query = userInputEl.value.trim();
+      if (!query) return;
+
+      // 1. Render User Message
+      appendUserMessage(query);
+      playBeep("user");
+
+      // 2. Reset Textarea
+      userInputEl.value = "";
+      userInputEl.style.height = "auto";
+      charCounterEl.textContent = "0 / 400";
+      sendBtnEl.disabled = true;
+
+      // 3. Show Bot Thinking Indicator
+      showTypingIndicator();
+
+      // 4. Simulate friendly conversational pause (450ms)
+      setTimeout(() => {
+        const response = findBestResponse(query);
+        appendBotMessage(response);
+        sendBtnEl.disabled = false;
+        userInputEl.focus();
+      }, 450);
+    }
+
+    // Dynamic Textarea Auto-Resize & Character Counter
+    userInputEl.addEventListener("input", function() {
+      this.style.height = "auto";
+      this.style.height = (this.scrollHeight) + "px";
+
+      const len = this.value.length;
+      charCounterEl.textContent = `${len} / 400`;
+
+      if (len > 0) {
+        sendBtnEl.disabled = false;
+      } else {
+        sendBtnEl.disabled = true;
+      }
+    });
+
+    // Handle Enter to submit (Shift+Enter for newline)
+    userInputEl.addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        if (this.value.trim().length > 0) {
+          handleFormSubmit(e);
+        }
+      }
+    });
+
+    /* ==================================================================
+       SECTION F: TOPICS EXPLORER DRAWER
+       ================================================================== */
+    const drawerBackdrop = document.getElementById("drawerBackdrop");
+    const drawerContentEl = document.getElementById("drawerContent");
+    const topicsBtnEl = document.getElementById("topicsBtn");
+
+    function toggleTopicsDrawer() {
+      const isOpen = drawerBackdrop.classList.contains("open");
+      if (isOpen) {
+        drawerBackdrop.classList.remove("open");
+      } else {
+        renderDrawerTopics();
+        drawerBackdrop.classList.add("open");
+        document.getElementById("drawerSearch").focus();
+      }
+    }
+    window.toggleTopicsDrawer = toggleTopicsDrawer;
+
+    function closeTopicsDrawer(e) {
+      if (e.target === drawerBackdrop) {
+        drawerBackdrop.classList.remove("open");
+      }
+    }
+    window.closeTopicsDrawer = closeTopicsDrawer;
+
+    topicsBtnEl.addEventListener("click", toggleTopicsDrawer);
+
+    // Render grouped topics into drawer
+    function renderDrawerTopics(filterText = "") {
+      const cleanFilter = filterText.toLowerCase().trim();
+      const categories = {};
+
+      KNOWLEDGE_BASE.forEach(item => {
+        if (!categories[item.category]) {
+          categories[item.category] = [];
+        }
+        if (!cleanFilter || 
+            item.title.toLowerCase().includes(cleanFilter) || 
+            item.keywords.some(k => k.toLowerCase().includes(cleanFilter))) {
+          categories[item.category].push(item);
+        }
+      });
+
+      let html = "";
+      for (const [catName, items] of Object.entries(categories)) {
+        if (items.length === 0) continue;
+        html += `
+          <div class="topic-group">
+            <h4>${catName}</h4>
+            <ul class="topic-list">
+              ${items.map(it => `
+                <li>
+                  <button class="topic-item-btn" data-prompt="${escapeHtml(it.title)}" onclick="selectDrawerTopic(this)">
+                    <span>${escapeHtml(it.title)}</span>
+                    <span style="opacity: 0.5;">&rarr;</span>
+                  </button>
+                </li>
+              `).join("")}
+            </ul>
+          </div>
+        `;
+      }
+
+      if (!html) {
+        html = `<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 2rem 0;">No matching topics found. Try another search term!</p>`;
+      }
+
+      drawerContentEl.innerHTML = html;
+    }
+
+    function filterDrawerTopics() {
+      const searchVal = document.getElementById("drawerSearch").value;
+      renderDrawerTopics(searchVal);
+    }
+    window.filterDrawerTopics = filterDrawerTopics;
+
+    function selectDrawerTopic(btnElement) {
+      const promptText = btnElement.getAttribute("data-prompt");
+      toggleTopicsDrawer();
+      if (promptText) {
+        askQuestion(promptText);
+      }
+    }
+    window.selectDrawerTopic = selectDrawerTopic;
+
+    /* ==================================================================
+       SECTION G: UTILITY CONTROLS (SOUND, CLEAR, EXPORT)
+       ================================================================== */
+    // Sound FX Toggle
+    const soundToggleBtn = document.getElementById("soundToggleBtn");
+    soundToggleBtn.addEventListener("click", () => {
+      state.isSoundEnabled = !state.isSoundEnabled;
+      soundToggleBtn.classList.toggle("active", state.isSoundEnabled);
+      soundToggleBtn.title = state.isSoundEnabled ? "Sound Effects: ON" : "Sound Effects: MUTED";
+      if (state.isSoundEnabled) playBeep("user");
+    });
+    soundToggleBtn.classList.add("active");
+
+    // Clear Chat
+    document.getElementById("clearChatBtn").addEventListener("click", () => {
+      if (confirm("Would you like to clear the current chat history?")) {
+        const rows = chatMessagesEl.querySelectorAll(".message-row:not(:first-of-type)");
+        rows.forEach(r => r.remove());
+        if (welcomeHeroEl) welcomeHeroEl.style.opacity = "1";
+        state.messageHistory = [];
+      }
+    });
+
+    // Export Chat Transcript to .txt File (100% Offline via Blob Data URI)
+    document.getElementById("exportChatBtn").addEventListener("click", () => {
+      if (state.messageHistory.length === 0) {
+        alert("There is no chat history to export yet!");
+        return;
+      }
+
+      let content = "========================================================\n";
+      content += " CAMPUS BUDDY - CONVERSATION TRANSCRIPT\n";
+      content += ` Date: ${new Date().toLocaleString()}\n`;
+      content += "========================================================\n\n";
+
+      state.messageHistory.forEach((msg, idx) => {
+        content += `[${msg.time}] ${msg.sender.toUpperCase()}:\n`;
+        content += `${msg.text}\n\n`;
+        content += "--------------------------------------------------------\n";
+      });
+
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `CampusBuddy_Chat_${new Date().toISOString().slice(0,10)}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+
+    // Initial render of topics drawer data
+    renderDrawerTopics();
+  </script>
+</body>
+</html>
